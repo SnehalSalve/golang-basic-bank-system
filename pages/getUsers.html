@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Users | Money Transfer</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="container-fluid">
+      <table
+        class="table table-dark table-striped table-hover table-responsive justify-content-center"
+      >
+        <thead>
+          <tr>
+            <th class="text-center" scope="col">ID</th>
+            <th class="text-center" scope="col">Name</th>
+            <th class="text-center" scope="col">Balance</th>
+            <th class="text-center" scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{ range $index, $data := . }}
+          <tr>
+            <td class="text-center">{{ $index }}</td>
+            <td class="text-center">{{ $data.Name }}</td>
+            <td class="text-center">{{ $data.Balance }}</td>
+            <td class="text-center">
+              <button
+                type="button"
+                class="btn btn-primary sendMoneyBtn"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+                data-id="{{ $index }}"
+                data-name="{{ $data.Name }}"
+                data-balance="{{ $data.Balance }}"
+              >
+                Transfer Money
+              </button>
+            </td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="exampleModal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Transaction</h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form action="/payment" method="POST">
+              <fieldset>
+                <legend>Initiate Transaction</legend>
+                <div class="mb-3">
+                  <label for="sendToName" class="form-label">Send To</label>
+                  <input
+                    type="text"
+                    id="sendToName"
+                    class="form-control"
+                    placeholder="Disabled input"
+                    value=""
+                    disabled
+                  />
+                  <input
+                    type="text"
+                    name="sendToNameHidden"
+                    id="sendToNameHidden"
+                    hidden
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="sendToBalance" class="form-label"
+                    >Current Balance</label
+                  >
+                  <input
+                    type="number"
+                    id="sendToBalance"
+                    class="form-control"
+                    placeholder="Disabled input"
+                    value=""
+                    disabled
+                  />
+                  <input
+                    type="number"
+                    name="sendToBalanceHidden"
+                    id="sendToBalanceHidden"
+                    hidden
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="disabledSelect" class="form-label"
+                    >Send From</label
+                  >
+                  <select
+                    id="disabledSelect"
+                    name="sendFromName"
+                    class="form-select"
+                  >
+                    {{ range $data := . }}
+                    <option>{{ $data.Name }}</option>
+                    {{ end }}
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="sendBalance" class="form-label"
+                    >Transfer Amount</label
+                  >
+                  <input
+                    type="number"
+                    min="1"
+                    id="sendToName"
+                    name="sendAmount"
+                    class="form-control"
+                    placeholder="Amount"
+                  />
+                </div>
+                <button type="submit" class="btn btn-success">
+                  Make Payment
+                </button>
+              </fieldset>
+            </form>
+          </div>
+          <div class="modal-footer"></div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+      crossorigin="anonymous"
+    ></script>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"
+      integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
+    <script>
+      $(document).on("click", ".sendMoneyBtn", function () {
+        var name = $(this).data("name");
+        var balance = $(this).data("balance");
+
+        $(".modal-body #sendToName").val(name);
+        $(".modal-body #sendToNameHidden").val(name);
+        $(".modal-body #sendToBalance").val(balance);
+        $(".modal-body #sendToBalanceHidden").val(balance);
+      });
+    </script>
+  </body>
+</html>
